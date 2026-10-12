@@ -1,0 +1,53 @@
+name: Test, Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: TypeScript 型チェック
+        run: npm run typecheck
+      - name: テスト (問題生成・集計・履歴・画面)
+        run: npm test
+      - name: Web ビルド
+        run: npm run build
+      - name: iPhone 相当の画面テスト (実ブラウザ)
+        run: |
+          npx playwright-core install --with-deps chromium
+          npm run test:e2e
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    # main へのマージ(push)のときだけ公開する。PRでは公開しない
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

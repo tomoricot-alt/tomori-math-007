@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "TOMORI MATH",
+    "slug": "tomori-math-007",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "TOMORI MATH",
+      "shortName": "TOMORI MATH",
+      "lang": "ja",
+      "backgroundColor": "#FFF8E7",
+      "themeColor": "#FF8A3D"
+    },
+    "experiments": {
+      "baseUrl": "/tomori-math-007"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
